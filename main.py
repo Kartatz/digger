@@ -30,8 +30,10 @@ async def main():
 	)
 
 	await client.start()
+	await bot.start()
+	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 5)
 	
 	offset = 0
 	
