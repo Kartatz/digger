@@ -14,11 +14,19 @@ logging.disable(logging.CRITICAL)
 async def main():
 	
 	client = hydrogram.Client(
-		name = "bot",
+		name = "user",
 		api_id = 105810,
 		api_hash = "3e7a52498eec003c5896a330e5d29397",
 		no_updates = True,
 		session_string = os.getenv("SESSION_STRING")
+	)
+	
+	bot = hydrogram.Client(
+		name = "bot",
+		api_id = 105810,
+		api_hash = "3e7a52498eec003c5896a330e5d29397",
+		no_updates = True,
+		session_string = os.getenv("BOT_TOKEN")
 	)
 
 	await client.start()
@@ -86,7 +94,10 @@ async def main():
 		await asynczipfile.zipfile_write(
 			instance = zip,
 			filename = old,
-			arcname = "%i. %s" % (offset, new)
+			arcname = "%i. %s" % (
+				offset,
+				new.replace("/", "_")
+			)
 		)
 		
 		await asynczipfile.zipfile_close(instance = zip)
@@ -99,7 +110,7 @@ async def main():
 		if file_size > maxsize:
 			chat_id = -1003765641864
 			
-			await client.send_document(
+			await bot.send_document(
 				chat_id = chat_id,
 				document = zipname
 			)
