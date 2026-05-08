@@ -4,6 +4,7 @@ import zipfile
 
 import hydrogram
 import aiofiles
+import aiofiles.os
 
 import asynczipfile
 
