@@ -64,12 +64,12 @@ async def main():
 		if not message.document:
 			continue
 		
-		if message.document.file_size > ((1024 * 1024) * 100):
-			continue
-		
 		file_name = message.document.file_name
 		
 		if not file_name.endswith((".epub", ".pdf", ".cbz")):
+			continue
+		
+		if file_name.endswith((".pdf")) and message.document.file_size > ((1024 * 1024) * 50):
 			continue
 		
 		file_name = (
