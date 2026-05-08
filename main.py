@@ -33,7 +33,7 @@ async def main():
 	await bot.start()
 	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 5)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
 	
 	offset = 0
 	
@@ -64,7 +64,7 @@ async def main():
 		if not message.document:
 			continue
 		
-		if message.document.file_size > 1e+8:
+		if message.document.file_size > ((1024 * 1024) * 100):
 			continue
 		
 		file_name = message.document.file_name
