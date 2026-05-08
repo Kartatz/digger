@@ -1,12 +1,15 @@
 import asyncio
 import os
 import zipfile
+import logging
 
 import hydrogram
 import aiofiles
 import aiofiles.os
 
 import asynczipfile
+
+logging.disable(logging.CRITICAL)
 
 async def main():
 	
