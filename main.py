@@ -154,9 +154,7 @@ async def main():
 			
 			print("Start upload")
 			
-			task = asyncio.create_task(
-				coro = upload(client = client, document = new, offset = offset)
-			)
+			await upload(client = client, document = new, offset = offset)
 			
 			zip = None
 		else:
