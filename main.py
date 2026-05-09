@@ -69,6 +69,8 @@ async def main():
 		)
 		await bot.start()
 		
+		print("Start %i" % (index))
+		
 		me = await bot.get_me()
 		
 		await client.promote_chat_member(
@@ -80,17 +82,6 @@ async def main():
 		)
 		
 		accounts.append(bot)
-	
-	bot = hydrogram.Client(
-		name = "bot",
-		api_id = 105810,
-		api_hash = "3e7a52498eec003c5896a330e5d29397",
-		no_updates = True,
-		session_string = os.getenv("BOT_TOKEN")
-	)
-
-	
-	#await bot.start()
 	
 	account = 0
 	
