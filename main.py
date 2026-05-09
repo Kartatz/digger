@@ -132,6 +132,9 @@ async def main():
 		if file_name.endswith((".pdf")) and message.document.file_size > ((1024 * 1024) * 50):
 			continue
 		
+		 if message.document.file_size >= ((1024 * 1024*) * 100):
+			continue
+		
 		file_name = (
 			file_name
 				.replace("_", " ")
@@ -191,20 +194,6 @@ async def main():
 		
 		if sum > maxsize:
 			await asynczipfile.zipfile_close(instance = zip)
-			
-			stat = await aiofiles.os.stat(path = zipname)
-			sum = stat.st_size
-			
-			if sum <= maxsize:
-				zip = await asynczipfile.zipfile_create(
-					file = zipname,
-					mode = "a",
-					compression = zipfile.ZIP_STORED,
-					compresslevel = 9
-				)
-				continue
-			
-			sum = 0
 			
 			if task:
 				await task
