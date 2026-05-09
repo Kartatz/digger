@@ -42,6 +42,8 @@ async def upload(client, document, offset):
 
 async def main():
 	
+	print("Start %i" % (0))
+	
 	client = hydrogram.Client(
 		name = "user",
 		api_id = 105810,
