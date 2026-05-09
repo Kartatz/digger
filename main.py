@@ -140,7 +140,7 @@ async def main():
 			old = zipname
 			new = old + str(time.time())
 			
-			await aiodiles.os.rename(old, new)
+			await aiofiles.os.rename(old, new)
 			
 			task = asyncio.create_task(
 				coro = upload(client = client, document = new, offset = offset)
