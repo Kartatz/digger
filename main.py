@@ -147,6 +147,8 @@ async def main():
 		
 		message = await message.copy(chat_id = -1002098959553)
 		
+		submessage = message
+		
 		bot = accounts[account]
 		
 		account += 1
@@ -164,6 +166,8 @@ async def main():
 		except (hydrogram.errors.FloodPremiumWait, hydrogram.errors.FloodWait) as e:
 			await asyncio.sleep(e.value)
 			await message.download(file_name = old)
+		
+		await submessage.delete()
 		
 		stat = await aiofiles.os.stat(path = ("downloads/" + old))
 		file_size = stat.st_size
