@@ -86,6 +86,7 @@ async def main():
 		accounts.append(bot)
 	
 	account = 0
+	_account = 0
 	
 	# print(await client.export_session_string())
 	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 100)
@@ -144,21 +145,30 @@ async def main():
 		old = "document.bin"
 		new = message.document.file_name
 		
-		while True:
-			try:
-				await message.download(file_name = old)
-			except (hydrogram.errors.FloodPremiumWait, hydrogram.errors.FloodWait) as e:
-				await asyncio.sleep(e.value)
-				await message.download(file_name = old)
+		message = await message.copy(chat_id = -1002098959553)
+		
+		bot = accounts[account]
+		
+		account += 1
+		
+		if account >= len(accounts):
+			account = 0
+		
+		message = await bot.get_messages(
+			chat_id = message.chat.id,
+			message_ids = message.id
+		)
+		
+		try:
+			await message.download(file_name = old)
+		except (hydrogram.errors.FloodPremiumWait, hydrogram.errors.FloodWait) as e:
+			await asyncio.sleep(e.value)
+			await message.download(file_name = old)
+		
+		stat = await aiofiles.os.stat(path = ("downloads/" + old))
+		file_size = stat.st_size
 			
-			stat = await aiofiles.os.stat(path = ("downloads/" + old))
-			file_size = stat.st_size
-			
-			if file_size == 0:
-				print("file_size")
-				continue
-			
-			break
+		assert file_size != 0
 		
 		old = ("downloads/" + old)
 		
@@ -202,17 +212,17 @@ async def main():
 			
 			print("Start upload")
 			
-			bot = accounts[account]
+			bot = accounts[_account]
 			
 			await upload(client = bot, document = new, offset = offset)
 			
 			
 			zip = None
 			
-			account += 1
+			_account += 1
 			
-			if account >= len(accounts):
-				account = 0
+			if _account >= len(accounts):
+				_account = 0
 		
 
 asyncio.run(main())
