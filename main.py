@@ -132,7 +132,7 @@ async def main():
 		if file_name.endswith((".pdf")) and message.document.file_size > ((1024 * 1024) * 50):
 			continue
 		
-		 if message.document.file_size >= ((1024 * 1024*) * 100):
+		 if message.document.file_size >= ((1024 * 1024) * 100):
 			continue
 		
 		file_name = (
