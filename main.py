@@ -95,7 +95,7 @@ async def main():
 	account = 0
 	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 10)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 30)
 	
 	offset = 0
 	file_size = 0
@@ -121,8 +121,8 @@ async def main():
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
 				mode = "w",
-				compression = zipfile.ZIP_STORED,
-				compresslevel = 0
+				compression = zipfile.ZIP_DEFLATED,
+				compresslevel = 9
 			)
 		
 		offset += 1
@@ -180,8 +180,19 @@ async def main():
 		if sum > maxsize:
 			await asynczipfile.zipfile_close(instance = zip)
 			
-			while not (task is None or task.done()):
-				await asyncio.sleep(0.5)
+			stat = await aiofiles.os.stat(path = zipname)
+			sum = stat.st_size
+			
+			if sum <= maxsize:
+				zip = await asynczipfile.zipfile_create(
+					file = zipname,
+					mode = "a",
+					compression = zipfile.ZIP_DEFLATED,
+					compresslevel = 9
+				)
+				continue
+			
+			sum = 0
 			
 			if task:
 				await task
