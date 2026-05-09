@@ -60,6 +60,13 @@ async def main():
 	await client.start()
 	await bot.start()
 	
+	accounts = (
+		client,
+		bot
+	)
+	
+	account = 0
+	
 	# print(await client.export_session_string())
 	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
 	
@@ -86,8 +93,8 @@ async def main():
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
 				mode = "w",
-				compression = zipfile.ZIP_LZMA,
-				compresslevel = 9
+				compression = zipfile.ZIP_STORED,
+				compresslevel = 0
 			)
 		
 		offset += 1
@@ -154,15 +161,20 @@ async def main():
 			
 			print("Start upload")
 			
-			await upload(client = client, document = new, offset = offset)
+			await upload(client = accounts[account], document = new, offset = offset)
 			
 			zip = None
+			
+			account += 1
+			
+			if account >= len(accounts):
+				account = 0
 		else:
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
 				mode = "a",
-				compression = zipfile.ZIP_LZMA,
-				compresslevel = 9
+				compression = zipfile.ZIP_STORED,
+				compresslevel = 0
 			)
 
 asyncio.run(main())
