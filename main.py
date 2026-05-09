@@ -216,6 +216,8 @@ async def main():
 			
 			if _account >= len(accounts):
 				_account = 0
+			
+			sum = 0
 		
 
 asyncio.run(main())
