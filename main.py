@@ -144,18 +144,23 @@ async def main():
 		old = "document.bin"
 		new = message.document.file_name
 		
-		try:
-			await message.download(file_name = old)
-		except (hydrogram.errors.FloodPremiumWait, hydrogram.errors.FloodWait) as e:
-			await asyncio.sleep(e.value)
-			await message.download(file_name = old)
+		while True:
+			try:
+				await message.download(file_name = old)
+			except (hydrogram.errors.FloodPremiumWait, hydrogram.errors.FloodWait) as e:
+				await asyncio.sleep(e.value)
+				await message.download(file_name = old)
+			
+			stat = await aiofiles.os.stat(path = ("downloads/" + old))
+			file_size = stat.st_size
+			
+			if file_size == 0:
+				print("file_size")
+				continue
+			
+			break
 		
 		old = ("downloads/" + old)
-		
-		stat = await aiofiles.os.stat(path = old)
-		file_size = stat.st_size
-		
-		assert file_size != 0
 		
 		await asynczipfile.zipfile_write(
 			instance = zip,
