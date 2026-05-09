@@ -95,10 +95,11 @@ async def main():
 	account = 0
 	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 10)
 	
 	offset = 0
 	file_size = 0
+	sum = 0
 	
 	async with aiofiles.open(file = "offset", mode = "r") as file:
 		text = await file.read()
@@ -145,7 +146,7 @@ async def main():
 				.replace(".cbz", "")
 		)
 		
-		print("Processing %s (offset = %i, size = '%s')" % (file_name, offset, human(file_size)))
+		print("Processing %s (offset = %i, size = '%s')" % (file_name, offset, human(sum)))
 		
 		old = "document.bin"
 		new = message.document.file_name
@@ -172,14 +173,13 @@ async def main():
 			)
 		)
 		
-		await asynczipfile.zipfile_close(instance = zip)
-		
 		await aiofiles.os.remove(path = old)
 		
-		stat = await aiofiles.os.stat(path = zipname)
-		file_size = stat.st_size
+		sum += file_size
 		
-		if file_size > maxsize:
+		if sum > maxsize:
+			await asynczipfile.zipfile_close(instance = zip)
+			
 			while not (task is None or task.done()):
 				await asyncio.sleep(0.5)
 			
@@ -193,7 +193,11 @@ async def main():
 			
 			print("Start upload")
 			
-			await upload(client = accounts[account], document = new, offset = offset)
+			bot = accounts[account]
+			
+			task = asyncio.create_task(
+				coro = upload(client = bot, document = new, offset = offset)
+			)
 			
 			zip = None
 			
@@ -201,12 +205,6 @@ async def main():
 			
 			if account >= len(accounts):
 				account = 0
-		else:
-			zip = await asynczipfile.zipfile_create(
-				file = zipname,
-				mode = "a",
-				compression = zipfile.ZIP_STORED,
-				compresslevel = 0
-			)
+		
 
 asyncio.run(main())
