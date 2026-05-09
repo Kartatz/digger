@@ -3,6 +3,7 @@ import os
 import zipfile
 import logging
 import time
+import json
 
 import hydrogram
 import aiofiles
@@ -49,6 +50,37 @@ async def main():
 		session_string = os.getenv("SESSION_STRING")
 	)
 	
+	await client.start()
+	
+	async with aiofiles.open(file = "tokens.json", mode = "r") as file:
+		text = await file.read()
+	
+	session_strings = json.loads(s= text)
+	
+	accounts = []
+	
+	for (index, session_string) in enumerate(session_strings):
+		bot = hydrogram.Client(
+			name = str(index),
+			api_id = 105810,
+			api_hash = "3e7a52498eec003c5896a330e5d29397",
+			no_updates = True,
+			session_string = session_string
+		)
+		await bot.start()
+		
+		me = await bot.get_me()
+		
+		await client.promote_chat_member(
+			chat_id = -1003765641864,
+			user_id = me.username,
+			privileges = hydrogram.types.ChatPrivileges(
+				can_post_messages=True,
+			)
+		)
+		
+		accounts.append(bot)
+	
 	bot = hydrogram.Client(
 		name = "bot",
 		api_id = 105810,
@@ -57,13 +89,8 @@ async def main():
 		session_string = os.getenv("BOT_TOKEN")
 	)
 
-	await client.start()
-	await bot.start()
 	
-	accounts = (
-		client,
-		bot
-	)
+	#await bot.start()
 	
 	account = 0
 	
