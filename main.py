@@ -14,7 +14,7 @@ logging.disable(logging.CRITICAL)
 
 async def upload(client, document, offset):
 	
-	await bot.send_document(
+	await client.send_document(
 		chat_id = -1003765641864,
 		document = document,
 		file_name = "document.zip"
