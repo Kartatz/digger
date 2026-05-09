@@ -12,6 +12,12 @@ import asynczipfile
 
 logging.disable(logging.CRITICAL)
 
+def human(size):
+	for unit in ("B", "KB", "MB", "GB", "TB", "PB"):
+		if size < 1024 or unit == "PB":
+			return f"{size:.2f} {unit}"
+		size /= 1024
+
 async def upload(client, document, offset):
 	
 	await client.send_document(
@@ -104,7 +110,7 @@ async def main():
 				.replace(".cbz", "")
 		)
 		
-		print("Processing %s (offset = %i)" % (file_name, offset))
+		print("Processing %s (offset = %i, size = '%s')" % (file_name, offset, human(file_size)))
 		
 		old = "document.bin"
 		new = message.document.file_name
@@ -137,10 +143,15 @@ async def main():
 			while not (task is None or task.done()):
 				await asyncio.sleep(0.5)
 			
+			if task:
+				await task
+			
 			old = zipname
-			new = old + str(time.time())
+			new = f"document-{int(time.time())}.zip"
 			
 			await aiofiles.os.rename(old, new)
+			
+			print("Start upload")
 			
 			task = asyncio.create_task(
 				coro = upload(client = client, document = new, offset = offset)
@@ -151,12 +162,8 @@ async def main():
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
 				mode = "a",
-				compression = zipfile.ZIP_DEFLATED,
+				compression = zipfile.ZIP_LZMA,
 				compresslevel = 9
 			)
-		
-		#print(message)
-	
-	#>await c.stop()
 
 asyncio.run(main())
