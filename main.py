@@ -95,7 +95,7 @@ async def main():
 	account = 0
 	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 30)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
 	
 	offset = 0
 	file_size = 0
@@ -121,7 +121,7 @@ async def main():
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
 				mode = "w",
-				compression = zipfile.ZIP_DEFLATED,
+				compression = zipfile.ZIP_STORED,
 				compresslevel = 9
 			)
 		
@@ -187,7 +187,7 @@ async def main():
 				zip = await asynczipfile.zipfile_create(
 					file = zipname,
 					mode = "a",
-					compression = zipfile.ZIP_DEFLATED,
+					compression = zipfile.ZIP_STORED,
 					compresslevel = 9
 				)
 				continue
