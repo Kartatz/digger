@@ -64,6 +64,7 @@ async def main():
 	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
 	
 	offset = 0
+	file_size = 0
 	
 	async with aiofiles.open(file = "offset", mode = "r") as file:
 		text = await file.read()
