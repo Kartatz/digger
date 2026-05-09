@@ -199,9 +199,8 @@ async def main():
 			
 			bot = accounts[account]
 			
-			task = asyncio.create_task(
-				coro = upload(client = bot, document = new, offset = offset)
-			)
+			await upload(client = bot, document = new, offset = offset)
+			
 			
 			zip = None
 			
