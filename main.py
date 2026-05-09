@@ -2,6 +2,7 @@ import asyncio
 import os
 import zipfile
 import logging
+import time
 
 import hydrogram
 import aiofiles
@@ -10,6 +11,27 @@ import aiofiles.os
 import asynczipfile
 
 logging.disable(logging.CRITICAL)
+
+async def upload(client, document, offset):
+	
+	await bot.send_document(
+		chat_id = -1003765641864,
+		document = document,
+		file_name = "document.zip"
+	)
+	
+	await aiofiles.os.remove(path = document)
+	
+	async with aiofiles.open(file = "offset", mode = "w") as file:
+		text = str(offset)
+		await file.write(text)
+	
+	process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
+	await process.communicate()
+	
+	process = await asyncio.create_subprocess_exec(*("git", "push"))
+	await process.communicate()
+	
 
 async def main():
 	
@@ -44,6 +66,8 @@ async def main():
 	
 	zip = None
 	zipname = "document.zip"
+	
+	task = None
 	
 	async for message in client.search_messages(
 		-1002315132889,
@@ -110,24 +134,19 @@ async def main():
 		file_size = stat.st_size
 		
 		if file_size > maxsize:
-			chat_id = -1003765641864
+			while not (task is None or task.done()):
+				await asyncio.sleep(0.5)
 			
-			await bot.send_document(
-				chat_id = chat_id,
-				document = zipname
+			old = zipname
+			new = old + str(time.time())
+			
+			await aiodiles.os.rename(old, new)
+			
+			task = asyncio.create_task(
+				coro = upload(client = client, document = new, offset = offset)
 			)
 			
 			zip = None
-			
-			async with aiofiles.open(file = "offset", mode = "w") as file:
-				text = str(offset)
-				await file.write(text)
-			
-			process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
-			await process.communicate()
-			
-			process = await asyncio.create_subprocess_exec(*("git", "push"))
-			await process.communicate()
 		else:
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
