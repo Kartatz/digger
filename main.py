@@ -158,6 +158,11 @@ async def main():
 		
 		old = ("downloads/" + old)
 		
+		stat = await aiofiles.os.stat(path = old)
+		file_size = stat.st_size
+		
+		assert file_size != 0
+		
 		await asynczipfile.zipfile_write(
 			instance = zip,
 			filename = old,
