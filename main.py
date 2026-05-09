@@ -95,7 +95,7 @@ async def main():
 	account = 0
 	
 	# print(await client.export_session_string())
-	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 50)
+	maxsize = (2000 * 1024 * 1024) - ((1024 * 1024) * 100)
 	
 	offset = 0
 	file_size = 0
