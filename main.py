@@ -28,17 +28,6 @@ async def upload(client, document, offset):
 	)
 	
 	await aiofiles.os.remove(path = document)
-	
-	async with aiofiles.open(file = "offset", mode = "w") as file:
-		text = str(offset)
-		await file.write(text)
-	
-	process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
-	await process.communicate()
-	
-	process = await asyncio.create_subprocess_exec(*("git", "push"))
-	await process.communicate()
-	
 
 async def main():
 	
@@ -104,6 +93,7 @@ async def main():
 	zipname = "document.zip"
 	
 	task = None
+	tasks = []
 	
 	async for message in client.search_messages(
 		-1002315132889,
@@ -195,9 +185,6 @@ async def main():
 		if sum > maxsize:
 			await asynczipfile.zipfile_close(instance = zip)
 			
-			if task:
-				await task
-			
 			old = zipname
 			new = f"document-{int(time.time())}.zip"
 			
@@ -207,8 +194,26 @@ async def main():
 			
 			bot = accounts[_account]
 			
-			await upload(client = bot, document = new, offset = offset)
+			task = asyncio.create_task(
+				coro = upload(client = bot, document = new, offset = offset)
+			)
 			
+			tasks.append(task)
+			
+			if len(tasks) == 10:
+				await asyncio.gather(*tasks)
+				
+				async with aiofiles.open(file = "offset", mode = "w") as file:
+					text = str(offset)
+					await file.write(text)
+				
+				process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
+				await process.communicate()
+				
+				process = await asyncio.create_subprocess_exec(*("git", "push"))
+				await process.communicate()
+				
+				tasks.clear()
 			
 			zip = None
 			
