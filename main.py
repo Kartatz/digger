@@ -63,6 +63,7 @@ async def main():
 		print("Start %i" % (index))
 		
 		me = await bot.get_me()
+		bot.me = me
 		
 		await client.promote_chat_member(
 			chat_id = -1003765641864,
@@ -111,9 +112,7 @@ async def main():
 		offset = offset,
 		filter = hydrogram.enums.MessagesFilter.DOCUMENT
 	):
-		message = await message.copy(chat_id = -1002098959553)
-		
-		submessage = message
+		offset += 1
 		
 		bot = accounts[account]
 		
@@ -121,6 +120,9 @@ async def main():
 		
 		if account >= len(accounts):
 			account = 0
+		
+		message = await message.copy(chat_id = bot.me.username)
+		submessage = message
 		
 		message = await bot.get_messages(
 			chat_id = message.chat.id,
