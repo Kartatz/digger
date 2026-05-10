@@ -121,6 +121,8 @@ async def main():
 		if account >= len(accounts):
 			account = 0
 		
+		await asyncio.sleep(1)
+		
 		message = await message.copy(chat_id = bot.me.username)
 		submessage = message
 		
