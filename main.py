@@ -11,7 +11,12 @@ import aiofiles.os
 
 import asynczipfile
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
+
+import logging
+
+# Sets the root logger level to DEBUG, enabling all messages
+logging.basicConfig(level=logging.DEBUG)
 
 async def handler(client, message):
 	await message.copy(chat_id = -1002110344067)
