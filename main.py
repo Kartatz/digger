@@ -72,6 +72,14 @@ async def main():
 			)
 		)
 		
+		await client.promote_chat_member(
+			chat_id = -1002110344067,
+			user_id = me.username,
+			privileges = hydrogram.types.ChatPrivileges(
+				can_post_messages=True,
+			)
+		)
+		
 		accounts.append(bot)
 	
 	account = 0
@@ -95,12 +103,50 @@ async def main():
 	task = None
 	tasks = []
 	
+	count = 0
+	
 	async for message in client.search_messages(
 		-1002315132889,
 		query = "",
 		offset = offset,
 		filter = hydrogram.enums.MessagesFilter.DOCUMENT
 	):
+		message = await message.copy(chat_id = -1002098959553)
+		
+		submessage = message
+		
+		bot = accounts[account]
+		
+		account += 1
+		
+		if account >= len(accounts):
+			account = 0
+		
+		message = await bot.get_messages(
+			chat_id = message.chat.id,
+			message_ids = message.id
+		)
+		
+		await message.copy(chat_id = -1002110344067)
+		
+		count += 1
+		
+		await submessage.delete()
+		
+		if count >= 1000:
+			async with aiofiles.open(file = "offset", mode = "w") as file:
+				text = str(offset)
+				await file.write(text)
+			
+			process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
+			await process.communicate()
+			
+			process = await asyncio.create_subprocess_exec(*("git", "push"))
+			await process.communicate()
+			
+			count -= count
+		
+		"""
 		if zip is None:
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
@@ -223,6 +269,7 @@ async def main():
 				_account = 0
 			
 			sum = 0
+		"""
 		
 
 asyncio.run(main())
