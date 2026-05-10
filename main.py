@@ -41,6 +41,7 @@ async def main():
 		api_id = 105810,
 		api_hash = "3e7a52498eec003c5896a330e5d29397",
 		no_updates = True,
+		takeout = True,
 		session_string = os.getenv("SESSION_STRING")
 	)
 	
@@ -119,45 +120,7 @@ async def main():
 		offset = offset,
 		filter = hydrogram.enums.MessagesFilter.DOCUMENT
 	):
-		offset += 1
 		
-		bot = accounts[account]
-		
-		account += 1
-		
-		if account >= len(accounts):
-			account = 0
-		
-		await asyncio.sleep(1)
-		
-		message = await message.copy(chat_id = bot.me.username)
-		submessage = message
-		
-		message = await bot.get_messages(
-			chat_id = message.chat.id,
-			message_ids = message.id
-		)
-		
-		# await message.copy(chat_id = -1002110344067)
-		
-		count += 1
-		
-		await submessage.delete()
-		
-		if count >= 1000:
-			async with aiofiles.open(file = "offset", mode = "w") as file:
-				text = str(offset)
-				await file.write(text)
-			
-			process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
-			await process.communicate()
-			
-			process = await asyncio.create_subprocess_exec(*("git", "push"))
-			await process.communicate()
-			
-			count -= count
-		
-		"""
 		if zip is None:
 			zip = await asynczipfile.zipfile_create(
 				file = zipname,
@@ -195,6 +158,7 @@ async def main():
 		old = "document.bin"
 		new = message.document.file_name
 		
+		"""
 		message = await message.copy(chat_id = -1002098959553)
 		
 		submessage = message
@@ -210,6 +174,7 @@ async def main():
 			chat_id = message.chat.id,
 			message_ids = message.id
 		)
+		"""
 		
 		try:
 			await message.download(file_name = old)
@@ -217,7 +182,7 @@ async def main():
 			await asyncio.sleep(e.value)
 			await message.download(file_name = old)
 		
-		await submessage.delete()
+		# await submessage.delete()
 		
 		stat = await aiofiles.os.stat(path = ("downloads/" + old))
 		file_size = stat.st_size
@@ -257,7 +222,7 @@ async def main():
 			
 			tasks.append(task)
 			
-			if len(tasks) == 10:
+			if len(tasks) == len(accounts):
 				await asyncio.gather(*tasks)
 				
 				async with aiofiles.open(file = "offset", mode = "w") as file:
@@ -280,7 +245,7 @@ async def main():
 				_account = 0
 			
 			sum = 0
-		"""
+		
 		
 
 asyncio.run(main())
