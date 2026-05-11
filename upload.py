@@ -95,7 +95,7 @@ async def main():
 			print(message.document.file_name)
 			temporary_file = "/tmp/document.bin"
 			
-			message = await message.download(file_name = temporary_file)
+			await message.download(file_name = temporary_file)
 			
 			stat = await aiofiles.os.stat(path = temporary_file)
 			file_size = stat.st_size
