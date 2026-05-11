@@ -38,5 +38,5 @@ jobs:
         
         echo '${{ secrets.BOT_TOKENS }}' > tokens.json
         
-        python -B main.py
+        python -B upload.py
 
