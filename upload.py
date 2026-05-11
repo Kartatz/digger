@@ -123,7 +123,7 @@ async def main():
 			
 			await aiofiles.os.remove(path = temporary_file)
 			
-			maxsize = (1 * 1024 * 1024) - ((1024 * 1024) * 100)
+			maxsize = (50000 * 1024 * 1024) - ((1024 * 1024) * 100)
 			
 			if sum >= maxsize:
 				await asynczipfile.zipfile_close(instance = zip)
@@ -135,7 +135,21 @@ async def main():
 				}
 				
 				response = await hclient.post(url = "https://store1.filemirage.com/upload.php", files = files)
-				print(response.text)
+				data = response.json()
+				
+				url = data["data"]["url"]
+				print(url)
+				async with aiofiles.open(file = "links", mode = "a+") as file:
+					await file.write("\n" + url)
+				
+				
+				process = await asyncio.create_subprocess_exec(*("git", "commit", "-m", "Update data", "-a"))
+				await process.communicate()
+				
+				process = await asyncio.create_subprocess_exec(*("git", "push"))
+				await process.communicate()
+				
+				
 				await aiofiles.os.remove(zipname)
 				
 				zip = None
